@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品</title>
+</head>
+<body>
+<div id="app-hanbai">
+    <h1>商品</h1>
+
+    <table>
+        <tr><th>商品ID</th><th>商品名</th><th>単価</th></tr>
+        <tr v-for="item in items">
+            <td v-text="item.sid"></td>
+            <td v-text="item.sname"></td>
+            <td v-text="item.tanka"></td>
+            <td><a href="#" @click="onDel(item.sid)">削除</a></td>
+        </tr>
+    </table>
+</div>    
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+var app = new Vue({
+    el: '#app-hanbai',
+    data: {
+        items: [],
+    },
+    mounted:function(){
+        this.load();
+    },
+    methods: {
+        load(){
+            var url = '/api/find';
+            axios.get(url).then(res => {
+                this.items = res.data;
+            })
+        },
+    }
+});
+</script>
+ 
+</body>
+</html>

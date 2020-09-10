@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品</title>
+</head>
+<body>
+<div id="app-hanbai">
+    <h1>商品</h1>
+
+    <a href="#" @click="onAdd">追加</a>
+    <form method="post" action="add" @submit.prevent="onSubmit" v-show="v_form">
+        商品名：<input type="text" name="sname" v-model="f_sname"><br>
+        単価　：<input type="text" name="tanka" v-model="f_tanka"><br>
+        <input type="submit" value="追加">
+    </form>
+
+    <table>
+        <tr><th>商品ID</th><th>商品名</th><th>単価</th></tr>
+        <tr v-for="item in items">
+            <td v-text="item.sid"></td>
+            <td v-text="item.sname"></td>
+            <td v-text="item.tanka"></td>
+            <td><a href="#" @click="onDel(item.sid)">削除</a></td>
+        </tr>
+    </table>
+</div>    
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+var app = new Vue({
+    el: '#app-hanbai',
+    data: {
+        items: [],
+        f_sname:"",
+        f_tanka:"",
+        v_form:false
+    },
+    mounted:function(){
+        this.load();
+    },
+    methods: {
+        load(){
+            var url = '/api/find';
+            axios.get(url).then(res => {
+                this.items = res.data;
+            })
+        },
+        onAdd(){
+            this.v_form = true;
+        },
+        onSubmit () {
+            const params = new FormData();
+            params.append('sname',this.f_sname);
+            params.append('tanka',this.f_tanka);
+            axios.post("/api/add", params).then(res => {
+                this.v_form = false;
+                this.load();
+            });
+        },
+        onDel (sid) {
+            if (confirm("削除しますか？")){
+                const params = new FormData();
+                params.append('sid',sid);
+                axios.post("/api/del", params).then(res => {
+                    this.load();
+                });
+            }
+        }
+    }
+});
+</script>
+ 
+</body>
+</html>
